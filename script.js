@@ -51,6 +51,7 @@ window.onload = function () {
     class VariableNode{
         constructor(stringValue) {
             this.stringValue = stringValue;
+            this.value;
         }
 
         calculate() {
@@ -78,35 +79,105 @@ window.onload = function () {
     }
 
     document.getElementById('submit').onclick = function () {
-        constNode1 = new ConstNode(1);
-        constNode0 = new ConstNode(0);
+        // constNode1 = new ConstNode(1);
+        // constNode0 = new ConstNode(0);
+        //
+        // unaryOperationNode = new UnaryOperationNode();
+        // unaryOperationNode.childNode = constNode0;
+        //
+        // binaryNode = new BinaryOperationNode("&");
+        // binaryNode.childNode1 = constNode1;
+        // binaryNode.childNode2 = unaryOperationNode;
+        //
+        // // alert(binaryNode.getStringValue());
+        // // alert(binaryNode.calculate());
+        //
+        // var a = [];
+        // a.push(constNode1);
+        // a.push(unaryOperationNode);
+        // a.push(binaryNode);
+        // for (var i = 0; i < a.length; i++) {
+        //     alert(a[i].getStringValue());
+        // }
 
-        unaryOperationNode = new UnaryOperationNode();
-        unaryOperationNode.childNode = constNode0;
+        var stackRPN = [];
+        stackRPN.push(new VariableNode("A"));
+        stackRPN.push(new VariableNode("B"));
+        stackRPN.push(new BinaryOperationNode("~"));
+        calculateRPN(stackRPN);
+         // var expression = document.forms["input"].elements["text"].value;
+         //  createRPN(expression)
+    }
 
-        binaryNode = new BinaryOperationNode("&");
-        binaryNode.childNode1 = constNode1;
-        binaryNode.childNode2 = unaryOperationNode;
+    function calculateRPN(stackRPN) {
+      var allNodes = [];
+      var variableNodes = [];
+      var tmpHolder = [];
+      while (stackRPN.length !== 0) {
+          var node = stackRPN.shift();
+          allNodes.push(node);
+          if(node instanceof VariableNode){
+              tmpHolder.push(node);
+              variableNodes.push(node)
+          }
+          if(node instanceof ConstNode){
+              tmpHolder.push(node);
+          }
+          if(node instanceof UnaryOperationNode){
+              node.childNode = tmpHolder.pop();
+              tmpHolder.push(node);
+          }
+          if(node instanceof BinaryOperationNode){
+              node.childNode2 = tmpHolder.pop();
+              node.childNode1 = tmpHolder.pop();
+              tmpHolder.push(node);
+          }
+      }
 
-        // alert(binaryNode.getStringValue());
-        // alert(binaryNode.calculate());
+      var head = tmpHolder.pop();
+      // alert(head.getStringValue());
+      // alert(head.calculate());
 
-        var a = [];
-        a.push(constNode1);
-        a.push(unaryOperationNode);
-        a.push(binaryNode);
-        for (var i = 0; i < a.length; i++) {
-            alert(a[i].getStringValue());
+        calculateAmount(allNodes);
+        checkIfPossible(head,variableNodes);
+    }
+
+    function calculateAmount(allNodes) {
+        var result = [];
+
+        for(var i = 0; i<allNodes.length; i++){
+            console.log(allNodes[i].getStringValue());
+            if(!result.includes(allNodes[i].getStringValue())){
+                result.push(allNodes[i].getStringValue());
+            }
         }
-        // var expression = document.forms["input"].elements["text"].value;
-        //  createRPN(expression)
+
+        console.log("result " + result.length);
+    }
+    
+    function checkIfPossible(head,variableNodes) {
+        var result = false;
+        for(var i = 0; i<Math.pow(2,variableNodes.length); i++){
+            var values = i.toString(2);
+            while (values.length < variableNodes.length) {
+                values = "0" + values;
+            }
+
+            for(var j = 0; j < variableNodes.length; j++){
+                variableNodes[j].value = parseInt(values[j]);
+            }
+
+            if(head.calculate() === 1){
+               result = true;
+               break;
+            }
+        }
+
+        console.log(result);
     }
 
     function createRPN(expression) {
-        alert("function " + expression);
-        var fixedExp = expression.replace(/->/g, "-");
 
-        alert("after " + fixedExp);
     }
 
 
