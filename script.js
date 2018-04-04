@@ -153,10 +153,11 @@ window.onload = function () {
         }
 
         console.log("result " + result.length);
+        document.body.innerHTML += "Количетсво подформул " + result.length +"<br>";
     }
     
     function checkIfPossible(head,variableNodes) {
-        var result = false;
+        var result = true;
         for(var i = 0; i<Math.pow(2,variableNodes.length); i++){
             var values = i.toString(2);
             while (values.length < variableNodes.length) {
@@ -168,12 +169,13 @@ window.onload = function () {
             }
 
             if(head.calculate() === 1){
-               result = true;
+               result = false;
                break;
             }
         }
 
         console.log(result);
+        document.body.innerHTML += "Формула невыполнима " + result;
     }
 
     function createRPN(expression) {
