@@ -79,6 +79,8 @@ window.onload = function () {
     }
 
     document.getElementById('submit').onclick = function () {
+        var expression = document.forms["input"].elements["text"].value;
+        alert(expression);
         // constNode1 = new ConstNode(1);
         // constNode0 = new ConstNode(0);
         //
@@ -155,8 +157,12 @@ window.onload = function () {
         console.log("result " + result.length);
         document.body.innerHTML += "Количетсво подформул " + result.length +"<br>";
     }
-    
+
+
+
     function checkIfPossible(head,variableNodes) {
+        var tmp = variableNodes;
+
         var result = true;
         for(var i = 0; i<Math.pow(2,variableNodes.length); i++){
             var values = i.toString(2);
